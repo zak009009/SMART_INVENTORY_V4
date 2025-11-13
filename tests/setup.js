@@ -8,7 +8,7 @@ process.env.SALT_ROUNDS = process.env.SALT_ROUNDS || '1';
 console.log('🧪 Test Environment Loaded:', {
   NODE_ENV: process.env.NODE_ENV,
   MONGO_URI: process.env.MONGO_URI,
-  PORT: process.env.PORT
+  // PORT: process.env.PORT
 });
 
 const { MongoMemoryServer } = require('mongodb-memory-server');
