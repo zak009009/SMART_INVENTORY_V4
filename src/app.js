@@ -45,5 +45,24 @@ app.get("/health", (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// Handle 404 - Route not found
+app.use('*', (req, res, next) => {
+  const error = new Error(`Route ${req.originalUrl} not found`);
+  error.statusCode = 404;
+  next(error);
+});
+
+// Handle 405 - Method not allowed (this should be handled by Express automatically, but adding explicit handling)
+app.use((err, req, res, next) => {
+  if (err.status === 405 || err.statusCode === 405) {
+    return res.status(405).json({
+      status: 'error',
+      message: 'Method not allowed'
+    });
+  }
+  next(err);
+});
+
 app.use(errorHandler);
 module.exports = app;
