@@ -1,0 +1,83 @@
+{
+  "name": "smart-inventory-v4",
+  "version": "4.0.0",
+  "description": "Smart Inventory API v4 - Node.js, Express, MongoDB avec tests automatisés",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "NODE_ENV=test node -r dotenv/config src/server.js dotenv_config_path=.env.test & sleep 2 && jest --runInBand --no-coverage; kill $!",
+    "test:unit": "NODE_ENV=test jest --testPathPattern=unit --runInBand --no-coverage",
+    "test:integration": "NODE_ENV=test jest --testPathPattern=integration --runInBand --no-coverage",
+    "test:watch": "NODE_ENV=test jest --watch --runInBand",
+    "test:coverage": "NODE_ENV=test jest --coverage --runInBand",
+    "test:env": "NODE_ENV=test node -r dotenv/config -e \"console.log('Test Environment Loaded:', process.env.NODE_ENV)\" dotenv_config_path=.env.test",
+    "test:all": "./scripts/run-tests.sh"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/server.js",
+      "!src/config/**",
+      "!**/node_modules/**"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "lcov",
+      "html"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "forceExit": true,
+    "detectOpenHandles": true,
+    "maxWorkers": 1,
+    "reporters": [
+      "default",
+      [
+        "jest-html-reporters",
+        {
+          "publicPath": "./docs",
+          "filename": "jest-report.html",
+          "pageTitle": "Smart Inventory API - Test Results",
+          "logoImgPath": "",
+          "hideIcon": false,
+          "expand": true,
+          "openReport": false,
+          "includeFailureMsg": true,
+          "includeSuiteFailure": true
+        }
+      ]
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.0",
+    "express": "^4.21.0",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "joi": "^18.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.3",
+    "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-html-reporters": "^3.1.7",
+    "mongodb-memory-server": "^10.3.0",
+    "newman": "^6.1.2",
+    "newman-reporter-htmlextra": "^1.23.1",
+    "nodemon": "^3.1.10",
+    "puppeteer": "^24.30.0",
+    "puppeteer-core": "^24.30.0",
+    "supertest": "^7.1.4"
+  }
+}

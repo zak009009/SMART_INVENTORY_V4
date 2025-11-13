@@ -1,0 +1,475 @@
+{
+  "info": {
+    "name": "Smart Inventory API - Error Tests",
+    "description": "Comprehensive error testing and validation for Smart Inventory API",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🚨 Validation Errors",
+      "item": [
+        {
+          "name": "📧 Invalid Email Format",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"invalid-email-format\",\n  \"password\": \"motdepasse123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Email validation error', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 422]);",
+                  "});",
+                  "",
+                  "pm.test('Error message contains email validation', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.error || responseJson.message).to.include('email');",
+                  "});",
+                  "",
+                  "console.log('📧 ERREUR EMAIL - Status:', pm.response.code);",
+                  "console.log('📧 ERREUR EMAIL - Body:', JSON.stringify(pm.response.json(), null, 2));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "🔐 Password Too Short",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Password length validation', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 422]);",
+                  "});",
+                  "",
+                  "pm.test('Error message mentions password length', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.error || responseJson.message).to.match(/password|caractères/i);",
+                  "});",
+                  "",
+                  "console.log('🔐 ERREUR PASSWORD - Status:', pm.response.code);",
+                  "console.log('🔐 ERREUR PASSWORD - Body:', JSON.stringify(pm.response.json(), null, 2));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "📝 Missing Required Fields",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Missing fields validation', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 422]);",
+                  "});",
+                  "",
+                  "pm.test('Error response structure', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('status').or.have.property('error');",
+                  "});",
+                  "",
+                  "console.log('📝 ERREUR CHAMPS MANQUANTS - Status:', pm.response.code);",
+                  "console.log('📝 ERREUR CHAMPS MANQUANTS - Body:', JSON.stringify(pm.response.json(), null, 2));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🌐 HTTP Protocol Errors",
+      "item": [
+        {
+          "name": "🔧 Malformed JSON",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"test@example.com\", \"password\":"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('JSON parsing error', function () {",
+                  "    pm.expect(pm.response.code).to.equal(400);",
+                  "});",
+                  "",
+                  "pm.test('JSON error message', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.error || responseJson.message).to.match(/json|parse|syntax/i);",
+                  "});",
+                  "",
+                  "console.log('🔧 ERREUR JSON - Status:', pm.response.code);",
+                  "console.log('🔧 ERREUR JSON - Body:', JSON.stringify(pm.response.json(), null, 2));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "📡 Wrong Content-Type",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/plain"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "email=test@example.com&password=123456"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Content-Type validation', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 415]);",
+                  "});",
+                  "",
+                  "console.log('📡 ERREUR CONTENT-TYPE - Status:', pm.response.code);",
+                  "console.log('📡 ERREUR CONTENT-TYPE - Body:', JSON.stringify(pm.response.json(), null, 2));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🔐 Authentication Errors",
+      "item": [
+        {
+          "name": "🔒 Missing Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Authentication required', function () {",
+                  "    pm.expect(pm.response.code).to.equal(401);",
+                  "});",
+                  "",
+                  "pm.test('Auth error message', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.error || responseJson.message).to.match(/token|auth/i);",
+                  "});",
+                  "",
+                  "console.log('🔒 ERREUR AUTH - Status:', pm.response.code);",
+                  "console.log('🔒 ERREUR AUTH - Body:', JSON.stringify(pm.response.json(), null, 2));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "🎫 Invalid Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid_token_123456"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Invalid token rejected', function () {",
+                  "    pm.expect(pm.response.code).to.equal(401);",
+                  "});",
+                  "",
+                  "console.log('🎫 ERREUR TOKEN - Status:', pm.response.code);",
+                  "console.log('🎫 ERREUR TOKEN - Body:', JSON.stringify(pm.response.json(), null, 2));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🚨 Security Tests",
+      "item": [
+        {
+          "name": "💉 NoSQL Injection Attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": {\"$ne\": null},\n  \"password\": {\"$ne\": null}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('NoSQL injection blocked', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 422, 500]);",
+                  "});",
+                  "",
+                  "pm.test('No successful authentication', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.not.have.property('token');",
+                  "});",
+                  "",
+                  "console.log('💉 ERREUR INJECTION - Status:', pm.response.code);",
+                  "console.log('💉 ERREUR INJECTION - Body:', JSON.stringify(pm.response.json(), null, 2));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "🔥 XSS Attempt in Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"<script>alert('hack')</script>@evil.com\",\n  \"password\": \"motdepasse123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('XSS attempt handled', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 422, 201]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "    pm.test('Email sanitized if accepted', function () {",
+                  "        const responseJson = pm.response.json();",
+                  "        if (responseJson.user && responseJson.user.email) {",
+                  "            pm.expect(responseJson.user.email).to.not.include('<script>');",
+                  "        }",
+                  "    });",
+                  "}",
+                  "",
+                  "console.log('🔥 ERREUR XSS - Status:', pm.response.code);",
+                  "console.log('🔥 ERREUR XSS - Body:', JSON.stringify(pm.response.json(), null, 2));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🗺️ Route Errors",
+      "item": [
+        {
+          "name": "🔍 Non-existent Route",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/nonexistent-endpoint",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "nonexistent-endpoint"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Route not found', function () {",
+                  "    pm.expect(pm.response.code).to.equal(404);",
+                  "});",
+                  "",
+                  "pm.test('404 error structure', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('status').or.have.property('error');",
+                  "});",
+                  "",
+                  "console.log('🗺️ ERREUR 404 - Status:', pm.response.code);",
+                  "console.log('🗺️ ERREUR 404 - Body:', JSON.stringify(pm.response.json(), null, 2));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "🆔 Invalid Resource ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/invalid-id-123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "invalid-id-123"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Invalid ID handled', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 404]);",
+                  "});",
+                  "",
+                  "console.log('🆔 ERREUR ID - Status:', pm.response.code);",
+                  "console.log('🆔 ERREUR ID - Body:', JSON.stringify(pm.response.json(), null, 2));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set base URL if not already set",
+          "if (!pm.environment.get('baseUrl')) {",
+          "    pm.environment.set('baseUrl', 'http://localhost:5000');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global error logging",
+          "if (pm.response.code >= 400) {",
+          "    console.log('❌ Error Response:', {",
+          "        status: pm.response.code,",
+          "        url: pm.request.url.toString(),",
+          "        method: pm.request.method,",
+          "        body: pm.response.json()",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ]
+}
