@@ -2,20 +2,15 @@
   "functions": {
     "api/*.js": {
       "maxDuration": 30
+    },
+    "api/**/*.js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [
     {
-      "source": "/api/products",
-      "destination": "/api/products"
-    },
-    {
       "source": "/health",
       "destination": "/api/health"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index"
     }
   ]
 }
